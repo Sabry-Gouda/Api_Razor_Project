@@ -1,0 +1,40 @@
+﻿
+@inject IService<Category> cat
+@inject NavigationManager mynav
+@page "/Edit-cat/{id:int}"
+<h3>Edit @id</h3>
+@if (mycat != null)
+{
+    <EditForm Model="mycat" OnValidSubmit="Save">
+        <DataAnnotationsValidator></DataAnnotationsValidator>
+        <div>
+            <label>Name</label>
+            <InputText @bind-Value="mycat.name" class="form-control"></InputText>
+            <ValidationMessage For="()=>mycat.name" class="text-danger"></ValidationMessage>
+        </div>
+        <input type="submit" value="Edit" class="btn btn-danger mt-3 mr-3">
+        <a href="/Category" class="btn btn-success mt-3">Back To Main Menu</a>
+
+    </EditForm>
+}else
+{
+    <h3>Category Not Found</h3>
+}
+@code {
+    [Parameter]
+    public int id { get; set; }
+    public Category mycat { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        mycat = await cat.getById(id);
+        await base.OnInitializedAsync();
+
+    }
+    public void Save()
+    {
+
+        cat.Update(id, mycat);
+        mynav.NavigateTo("/Category");
+    }
+}

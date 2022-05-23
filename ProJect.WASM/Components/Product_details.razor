@@ -1,0 +1,38 @@
+﻿
+@inject IService<Product> prod
+
+@page "/product_detail/{id:int}"
+@if (Myproduct !=null)
+{
+<h3 class="text-dark">@Myproduct.name</h3>
+<div class="card" style="width: 18rem;">
+  <img src="/img/@Myproduct.image" class="card-img-top" alt="...">
+  <div class="card-body">
+    <h5 class="card-title">@Myproduct.name</h5>
+    <p class="card-text">@Myproduct.description</p>
+  </div>
+  <ul class="list-group list-group-flush">
+    <li class="list-group-item"> Salary @Myproduct.Price</li>
+  </ul>
+  <div class="card-body">
+    <a href="/Products" class="card-link">Back To Main Menu</a>
+  </div>
+	</div>
+}
+
+else
+{
+	<h1>Fetching Data</h1>
+}
+@code {
+	[Parameter]
+	public int id { get; set; }
+	public Product Myproduct { get; set; }
+
+
+	protected async override Task OnInitializedAsync()
+	{
+		Myproduct =await prod.getById(id);
+		await base.OnInitializedAsync();
+	}
+}

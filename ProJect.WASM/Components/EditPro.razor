@@ -1,0 +1,75 @@
+﻿
+@inject IService<Category> allcat
+@inject NavigationManager mynav
+
+@inject IService<Product> pro
+@page "/Edit-pro/{id:int}"
+<h3>Edit @id</h3>
+@if (Myproduct != null)
+{
+    <EditForm Model="Myproduct" OnValidSubmit="Save">
+        <DataAnnotationsValidator></DataAnnotationsValidator>
+        <div>
+            <label>Name</label>
+            <InputText @bind-Value="Myproduct.name" class="form-control"></InputText>
+            <ValidationMessage For="()=>Myproduct.name" class="text-danger"></ValidationMessage>
+
+        </div>
+        <div>
+            <label>Price</label>
+            <InputNumber @bind-Value="Myproduct.Price" class="form-control"></InputNumber>
+            <ValidationMessage For="()=>Myproduct.Price" class="text-danger"></ValidationMessage>
+
+        </div>
+        <div>
+            <label>Image</label>
+            <InputText @bind-Value="Myproduct.image" class="form-control"></InputText>
+            <ValidationMessage For="()=>Myproduct.image" class="text-danger"></ValidationMessage>
+
+        </div>
+         <div>
+            <label>Desc</label>
+            <InputText @bind-Value="Myproduct.description" class="form-control"></InputText>
+            <ValidationMessage For="()=>Myproduct.description" class="text-danger"></ValidationMessage>
+
+        </div>
+        <div>
+            <label>Department</label>
+            <InputSelect @bind-Value="Myproduct.Cat_id" class="form-control">
+                @foreach (var item in mycat)
+                   {
+                       <option value="@item.id">@item.name</option>
+                   }
+            </InputSelect>
+        </div>
+        <input type="submit" value="Edit" class="btn btn-danger mt-3 mr-3">
+        <a href="/Products" class="btn btn-success mt-3">Back To Main Menu</a>
+
+
+    </EditForm>
+}else
+{
+    <h3>Category Not Found</h3>
+}
+@code {
+    [Parameter]
+    public int id { get; set; }
+    public Product Myproduct { get; set; }
+    public List<Category> mycat { get; set; }
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        Myproduct = await pro.getById(id);
+        mycat = await allcat.getAll();
+        await base.OnInitializedAsync();
+
+    }
+    public void Save()
+    {
+
+        pro.Update(id, Myproduct);
+        mynav.NavigateTo("/Products");
+
+    }
+}
